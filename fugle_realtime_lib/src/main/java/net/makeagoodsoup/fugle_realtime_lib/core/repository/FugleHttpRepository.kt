@@ -3,6 +3,7 @@ package net.makeagoodsoup.fugle_realtime_lib.core.repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.makeagoodsoup.fugle_realtime_lib.core.entities.ChartData
+import net.makeagoodsoup.fugle_realtime_lib.core.entities.DealtsData
 import net.makeagoodsoup.fugle_realtime_lib.core.entities.MetaData
 import net.makeagoodsoup.fugle_realtime_lib.core.remote.ApiClient
 
@@ -28,6 +29,18 @@ class FugleHttpRepository {
                 Result.Error(NullPointerException("Response failed: ${response.message()}"))
             } else {
                 Result.Success(chartData)
+            }
+        }
+    }
+
+    suspend fun getDealts(symbolId: String, apiToken: String): Result<DealtsData> {
+        return withContext(Dispatchers.IO) {
+            val response = ApiClient.makeIntradayService().getDealts(symbolId = symbolId, apiToken = apiToken)
+            val dealtsData = response.body()?.data
+            if (dealtsData == null) {
+                Result.Error(NullPointerException("Response failed: ${response.message()}"))
+            } else {
+                Result.Success(dealtsData)
             }
         }
     }
